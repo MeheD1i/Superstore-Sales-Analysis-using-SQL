@@ -1,6 +1,6 @@
 ## Project Overview
 
-This project focuses on performing business analysis using SQL on the Sample Superstore dataset.  
+This project focuses on performing business analysis using MYSQL on the Sample Superstore dataset.  
 The goal is to uncover **key business insights** related to sales, profit, customers and discount strategies.
 
 ---
@@ -286,7 +286,7 @@ Tamara Chand stands out as the most profitable customer, generating over 8.9K in
 
 ---
 
-### 💸 5. Discount Impact on Profit
+### 5. Discount Impact on Profit
 
 **Business Question:**  
 > Is there a correlation between discounts and profit?  
@@ -294,7 +294,7 @@ Tamara Chand stands out as the most profitable customer, generating over 8.9K in
 
 ---
 
-#### 💻 SQL Query:
+#### SQL Query:
 ```sql
 -- Discount Impact on Profit
 SELECT DISTINCT(Discount)
