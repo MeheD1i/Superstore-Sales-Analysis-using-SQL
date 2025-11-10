@@ -47,7 +47,7 @@ USE superstore;
 
 ---
 
-#### 💻 SQL Query:
+#### SQL Query:
 ```sql
 SELECT 
     Region,
@@ -81,7 +81,7 @@ Furniture has very low margins (1–5%), and in Central region the profit is neg
 
 ---
 
-### 📅 2. Monthly Sales & Profit Trend
+### 2. Monthly Sales & Profit Trend
 
 **Business Question:**  
 > How do sales and profit change over time?  
@@ -89,7 +89,7 @@ Furniture has very low margins (1–5%), and in Central region the profit is neg
 
 ---
 
-#### 💻 SQL Query:
+#### SQL Query:
 ```sql
 -- Check date format
 SELECT Order_Date FROM orders LIMIT 5;
@@ -130,7 +130,7 @@ December 2016 and October 2016 were the most profitable months. Late-year months
 
 ---
 
-#### 💻 SQL Query:
+#### SQL Query:
 ```sql
 -- Product Performance
 SELECT COUNT(DISTINCT(Product_Name))
@@ -173,7 +173,7 @@ Canon imageCLASS 2200 Advanced Copier is the most profitable product. It contrib
 
 ---
 
-#### 💻 SQL Query:
+#### SQL Query:
 ```sql
 -- TOP 10 products that are losing money (negative profit)
 SELECT 
@@ -214,7 +214,7 @@ Cubify CubeX 3D Printer Double Head Print is showing heavy losses than others.
 
 ---
 
-#### 💻 SQL Query:
+#### SQL Query:
 ```sql
 -- Regional city analysis
 SELECT 
@@ -242,3 +242,90 @@ LIMIT 10;
 
 #### Opinion:
 California and New York are the top-performing states both in sales and profit. Texas and Pennsylvania show high sales but negative profit.
+
+---
+
+### 6. Top 10 Customers by Profit
+
+**Business Question:**  
+> Who are the top customers contributing the most to total profit?  
+> What percentage of total profit do these top customers account for?
+
+---
+
+#### SQL Query:
+```sql
+-- Top 10 Customers by Profit 
+SELECT 
+    Customer_Name,
+    ROUND(SUM(Sales), 2) AS Total_Sales,
+    ROUND(SUM(Profit), 2) AS Total_Profit,
+    ROUND(SUM(Profit) / (SELECT SUM(Profit) FROM orders) * 100, 2) AS Contribution_Percent,
+    RANK() OVER (ORDER BY SUM(Profit) DESC) AS Profit_Rank
+FROM orders
+GROUP BY Customer_Name
+ORDER BY Profit_Rank
+LIMIT 10;
+```
+-Output- 
+| Profit_Rank | Customer_Name        | Total_Sales | Total_Profit | Contribution_% |
+| :---------: | :------------------- | ----------: | -----------: | -------------: |
+|      1      | Tamara Chand         |   19,017.85 |     8,964.48 |           3.17 |
+|      2      | Raymond Buch         |   15,117.34 |     6,976.10 |           2.47 |
+|      3      | Sanjit Chand         |   14,142.33 |     5,757.41 |           2.04 |
+|      4      | Hunter Lopez         |   12,873.30 |     5,622.43 |           1.99 |
+|      5      | Adrian Barton        |   14,355.61 |     5,438.91 |           1.92 |
+|      6      | Tom Ashbrook         |   14,595.62 |     4,703.79 |           1.66 |
+|      7      | Christopher Martinez |    8,954.02 |     3,899.89 |           1.38 |
+|      8      | Keith Dawkins        |    8,181.26 |     3,038.63 |           1.07 |
+|      9      | Andy Reiter          |    6,608.45 |     2,884.62 |           1.02 |
+|      10     | Daniel Raglin        |    8,350.87 |     2,869.08 |           1.01 |
+
+#### Opinion:
+Tamara Chand stands out as the most profitable customer, generating over 8.9K in profit (3.17%) alone.
+
+---
+
+### 💸 5. Discount Impact on Profit
+
+**Business Question:**  
+> Is there a correlation between discounts and profit?  
+> Do higher discounts actually lead to more sales, or do they reduce profitability?
+
+---
+
+#### 💻 SQL Query:
+```sql
+-- Discount Impact on Profit
+SELECT DISTINCT(Discount)
+FROM orders;
+
+SELECT
+    CASE 
+        WHEN Discount = 0 THEN 'No Discount'
+        WHEN Discount BETWEEN 0.01 AND 0.2 THEN 'Low (1–20%)'
+        WHEN Discount BETWEEN 0.21 AND 0.4 THEN 'Medium (21–40%)'
+        WHEN Discount BETWEEN 0.41 AND 0.6 THEN 'Medium (41–60%)'
+        WHEN Discount > 0.6 THEN 'High (>60%)'
+    END AS Discount_Level,
+    ROUND(SUM(Sales), 2) AS Total_Sales,
+    ROUND(SUM(Profit), 2) AS Total_Profit,
+    ROUND(SUM(Profit) / SUM(Sales) * 100, 2) AS AVG_Profit_Margin
+FROM orders
+GROUP BY Discount_Level
+ORDER BY Total_Profit DESC;
+```
+
+| Discount_Level  |  Total_Sales | Total_Profit | Avg_Profit_Margin (%) |
+| :-------------- | -----------: | -----------: | --------------------: |
+| No Discount     | 1,072,777.32 |   317,184.04 |                 29.57 |
+| Low (1–20%)     |   838,235.31 |    99,827.47 |                 11.91 |
+| Medium (41–60%) |    70,640.91 |   -28,547.94 |                -40.41 |
+| Medium (21–40%) |   234,065.97 |   -35,825.86 |                -15.31 |
+| High (>60%)     |    56,730.34 |   -69,779.97 |               -123.00 |
+
+
+#### Opinion:
+The “No Discount” segment is by far the most profitable about 29.6% margin and over $317K profit.
+Even a low discount (1–20%) reduces profit margin significantly to around 12%.
+Medium and High discount ranges result in negative profits, meaning products are being sold at a loss.
