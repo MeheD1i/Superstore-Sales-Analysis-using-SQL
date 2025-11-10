@@ -286,7 +286,7 @@ Tamara Chand stands out as the most profitable customer, generating over 8.9K in
 
 ---
 
-### 5. Discount Impact on Profit
+### 7. Discount Impact on Profit
 
 **Business Question:**  
 > Is there a correlation between discounts and profit?  
